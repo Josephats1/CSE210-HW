@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abstraction in OOP</title>
+    <style>
+        /* CSS for page styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #2980b9;
+            margin-top: 20px;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        code {
+            background-color: #ecf0f1;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        pre {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .hidden {
+            display: none;
+        }
+        .logo {
+            font-size: 3rem; /* Size of the text */
+            text-align: center;
+            
+          font-family: 'Brush Script MT', Times, serif;
+            animation: neonEffect 3s ease-in-out infinite alternate; /* Animation */
+            display: inline-block;
+            color: #fff;
+        }
+
+        /* Keyframe animation for transforming and color change */
+        @keyframes neonEffect {
+            0% {
+                transform: scale(1);
+                color: #ff4f4f; /* Red color */
+            }
+            25% {
+                transform: scale(1.1);
+                color: #3d17c7; /* Orange color */
+            }
+            50% {
+                transform: scale(1);
+                color: #eeee3f; /* Yellow color */
+            }
+         
+        }
+    </style>
+</head>
+<body>
+    <h2 class="logo">Baluku Josephats</h2>
+    <div class="container">
+        <h1>W02 Assignment: Explain Abstraction</h1>
+
+        <section>
+            <h2>What is Abstraction?</h2>
+            <p>Abstraction is a core principle in object-oriented programming (OOP) that involves simplifying complex systems by hiding unnecessary details and exposing only the essential features. It allows developers to focus on high-level concepts without needing to understand all the intricate, underlying mechanisms. Essentially, abstraction helps to break down a problem into smaller, manageable parts, which is crucial for managing complexity in larger software systems.</p>
+            <p>The benefit of abstraction is that it promotes modularity and reusability. By creating clear boundaries between different components of a program, we can easily modify or extend parts of the system without affecting others. This makes the software easier to maintain, understand, and debug.</p>
+            <p>A practical example of abstraction in real-world software development is using the <code>print()</code> function in Python. The user doesn't need to know the details about how printing works at the machine level. Instead, they just use the function name and pass the data they want to print.</p>
+        </section>
+
+        <section>
+            <h2>Example from My Program</h2>
+            <p>In the program I wrote, the abstraction is demonstrated through the <code>Job</code> and <code>Resume</code> classes. The <code>Job</code> class encapsulates details about a job (such as the company name, job title, and years worked) while hiding the implementation details of how the job data is managed. The <code>Resume</code> class uses a list of <code>Job</code> instances to maintain and display a person's work history.</p>
+            
+            <button onclick="toggleCode()">Show Example Code</button>
+            <pre id="code-block" class="hidden">
+public class Job
+{
+    public string _jobTitle;
+    public string _company;
+    public int _startYear;
+    public int _endYear;
+
+    public void DisplayJobDetails()
+    {
+        Console.WriteLine($"{_jobTitle} ({_company}) {_startYear}-{_endYear}");
+    }
+}
+
+public class Resume
+{
+    public string _name;
+    public List<Job> _jobs = new List<Job>();
+
+    public void Display()
+    {
+        Console.WriteLine($"Name: {_name}");
+        Console.WriteLine("Jobs:");
+        foreach (Job job in _jobs)
+        {
+            job.DisplayJobDetails();
+        }
+    }
+}
+            </pre>
+        </section>
+
+        <section>
+            <h2>Why Abstraction is Important</h2>
+            <ul>
+                <li><strong>Simplification:</strong> Abstraction hides unnecessary complexity, letting developers focus on high-level functionality.</li>
+                <li><strong>Modularity:</strong> It promotes breaking a system into smaller, manageable components, each responsible for specific tasks.</li>
+                <li><strong>Reusability:</strong> Abstracted components are easier to reuse across the system.</li>
+                <li><strong>Maintainability:</strong> You can easily change or extend parts of the system without affecting others.</li>
+                <li><strong>Security:</strong> By hiding sensitive implementation details, abstraction can improve security.</li>
+            </ul>
+        </section>
+    </div>
+
+    <script>
+        // JavaScript to toggle code block visibility
+        function toggleCode() {
+            const codeBlock = document.getElementById("code-block");
+            // Toggle the hidden class to show/hide the code
+            codeBlock.classList.toggle("hidden");
+        }
+    </script>
+</body>
+</html>
