@@ -4,7 +4,7 @@ using System.IO;
 
 public class Journal
 {
-    private List<JournalEntry> entries;
+    private List<JournalEntry> entries;  // List to hold all journal entries
     private static readonly Random random = new Random();
     private static readonly List<string> prompts = new List<string>
     {
@@ -15,19 +15,22 @@ public class Journal
         "If I had one thing I could do over today, what would it be?"
     };
 
+    // Constructor to initialize the journal entries list
     public Journal()
     {
         entries = new List<JournalEntry>();
     }
 
+    // Method to add a new entry to the journal
     public void AddEntry(string response)
     {
-        string prompt = prompts[random.Next(prompts.Count)];
+        string prompt = prompts[random.Next(prompts.Count)];  // Randomly select a prompt
         JournalEntry entry = new JournalEntry(prompt, response);
         entries.Add(entry);
         Console.WriteLine("Entry added successfully!");
     }
 
+    // Method to display all journal entries
     public void DisplayEntries()
     {
         if (entries.Count == 0)
@@ -42,6 +45,7 @@ public class Journal
         }
     }
 
+    // Method to save the journal entries to a file
     public void SaveToFile(string filename)
     {
         try
@@ -61,6 +65,7 @@ public class Journal
         }
     }
 
+    // Method to load journal entries from a file
     public void LoadFromFile(string filename)
     {
         try

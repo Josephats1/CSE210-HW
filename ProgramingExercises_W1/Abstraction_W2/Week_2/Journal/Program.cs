@@ -7,6 +7,7 @@ class Program
         Journal journal = new Journal();
         bool running = true;
 
+        // Loop to show menu and handle user input
         while (running)
         {
             Console.Clear();
@@ -44,6 +45,7 @@ class Program
         }
     }
 
+    // Method to handle writing a new journal entry
     static void WriteNewEntry(Journal journal)
     {
         Console.WriteLine("Please write your response to the prompt: ");
@@ -51,6 +53,7 @@ class Program
         journal.AddEntry(response);
     }
 
+    // Method to handle saving the journal to a file
     static void SaveJournalToFile(Journal journal)
     {
         Console.Write("Enter filename to save journal: ");
@@ -58,6 +61,7 @@ class Program
         journal.SaveToFile(filename);
     }
 
+    // Method to handle loading the journal from a file
     static void LoadJournalFromFile(Journal journal)
     {
         Console.Write("Enter filename to load journal: ");
