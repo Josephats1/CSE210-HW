@@ -1,3 +1,11 @@
+// --------------------------------------------------------
+// Scripture Memorization Program
+// Author: Baluku Josephats, Software Dev Student BYUI
+// Date: 20, mar 2025
+// Purpose: A simple console-based program that helps users
+//          memorize scriptures by progressively hiding words.
+// --------------------------------------------------------
+
 using System;
 
 class Program
