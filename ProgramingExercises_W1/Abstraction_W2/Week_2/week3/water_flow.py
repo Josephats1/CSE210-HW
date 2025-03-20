@@ -1,59 +1,84 @@
-import math
+# Constants
+EARTH_ACCELERATION_OF_GRAVITY = 9.8066500  # m/s^2
+WATER_DENSITY = 998.2000000  # kg/m^3
+WATER_DYNAMIC_VISCOSITY = 0.0010016  # Pascal seconds (Pa·s)
 
-g = 9.80665  # Acceleration due to gravity (m/s^2)
-rho = 998.2  # Density of water (kg/m^3)
-mu = 0.001003  # Dynamic viscosity of water (Pa.s)
+PVC_SCHED80_INNER_DIAMETER = 0.28687  # meters
+PVC_SCHED80_FRICTION_FACTOR = 0.013  # unitless
+SUPPLY_VELOCITY = 1.65  # m/s
+HDPE_SDR11_INNER_DIAMETER = 0.048692  # meters
+HDPE_SDR11_FRICTION_FACTOR = 0.018  # unitless
+HOUSEHOLD_VELOCITY = 1.75  # m/s
 
 
 def water_column_height(tower_height, tank_height):
-    return tower_height + tank_height
+    return tower_height - tank_height
 
 
-def pressure_gain_from_water_height(height):
-    return rho * g * height / 1000  # Convert to kPa
+def pressure_gain_from_water_height(water_height):
+    return WATER_DENSITY * EARTH_ACCELERATION_OF_GRAVITY * water_height / 1000  # Pressure in kPa
 
 
-def pressure_loss_from_pipe(length, diameter, velocity, friction_factor):
-    return -(friction_factor * (length / diameter) * (rho * velocity**2 / 2) / 1000)
+def pressure_loss_from_pipe(diameter, length, friction, velocity):
+    # Calculate the pressure loss based on the Darcy-Weisbach equation
+    return -friction * (length / diameter) * (velocity ** 2) / 2000  # Pressure in kPa
 
 
-def pressure_loss_from_fittings(velocity, quantity):
-    k = 0.04  # Loss coefficient per fitting
-    return -(quantity * k * (rho * velocity**2 / 2) / 1000)
+def pressure_loss_from_fittings(fluid_velocity, quantity_fittings):
+    # Pressure loss formula due to fittings
+    return -0.04 * WATER_DENSITY * (fluid_velocity ** 2) * quantity_fittings / 2000  # Pressure in kPa
 
 
-def reynolds_number(diameter, velocity):
-    return (rho * velocity * diameter) / mu
+def reynolds_number(hydraulic_diameter, fluid_velocity):
+    # Calculate the Reynolds number
+    return (WATER_DENSITY * hydraulic_diameter * fluid_velocity) / WATER_DYNAMIC_VISCOSITY
 
 
-def pressure_loss_from_pipe_reduction(diameter1, diameter2, velocity1, velocity2):
-    k = (1 - (diameter2 / diameter1) ** 2) ** 2
-    return -(k * (rho * velocity1**2 / 2) / 1000)
+def pressure_loss_from_pipe_reduction(larger_diameter, fluid_velocity, reynolds_number, smaller_diameter):
+    # Check for zero Reynolds number
+    if reynolds_number == 0:
+        raise ValueError("Reynolds number cannot be zero.")
+    
+    # Proceed with the calculation if Reynolds number is non-zero
+    k = 0.1 + (50 / reynolds_number) * (larger_diameter / smaller_diameter) ** 4
+    
+    # Add the rest of your logic and return value
+    return k
 
 
+# Conversion function from kPa to psi
+def kPa_to_psi(pressure_kPa):
+    return pressure_kPa * 0.145038  # Conversion factor
+PVC_SCHED80_INNER_DIAMETER = 0.28687 # (meters)  11.294 inches
+PVC_SCHED80_FRICTION_FACTOR = 0.013  # (unitless)
+SUPPLY_VELOCITY = 1.65               # (meters / second)
+HDPE_SDR11_INNER_DIAMETER = 0.048692 # (meters)  1.917 inches
+HDPE_SDR11_FRICTION_FACTOR = 0.018   # (unitless)
+HOUSEHOLD_VELOCITY = 1.75            # (meters / second)
 def main():
-    tower_height = float(input("Enter the tower height (m): "))
-    tank_height = float(input("Enter the tank height (m): "))
-    pipe_length = float(input("Enter the pipe length (m): "))
-    pipe_diameter = float(input("Enter the pipe diameter (m): "))
-    velocity = float(input("Enter the water velocity (m/s): "))
-    friction_factor = float(input("Enter the pipe friction factor: "))
-    fittings = int(input("Enter the number of pipe fittings: "))
-    diameter2 = float(input("Enter the reduced pipe diameter (m): "))
-
-    height = water_column_height(tower_height, tank_height)
-    pressure_height = pressure_gain_from_water_height(height)
-    pressure_pipe = pressure_loss_from_pipe(pipe_length, pipe_diameter, velocity, friction_factor)
-    pressure_fittings = pressure_loss_from_fittings(velocity, fittings)
-    re = reynolds_number(pipe_diameter, velocity)
-    velocity2 = velocity * (pipe_diameter / diameter2) ** 2
-    pressure_reduction = pressure_loss_from_pipe_reduction(pipe_diameter, diameter2, velocity, velocity2)
-
-    total_pressure = pressure_height + pressure_pipe + pressure_fittings + pressure_reduction
-
-    print(f"Total pressure at the house: {total_pressure:.2f} kPa")
-    print(f"Reynolds number: {re:.0f}")
-
-
+    tower_height = float(input("Height of water tower (meters): "))
+    tank_height = float(input("Height of water tank walls (meters): "))
+    length1 = float(input("Length of supply pipe from tank to lot (meters): "))
+    quantity_angles = int(input("Number of 90° angles in supply pipe: "))
+    length2 = float(input("Length of pipe from supply to house (meters): "))
+    water_height = water_column_height(tower_height, tank_height)
+    pressure = pressure_gain_from_water_height(water_height)
+    diameter = PVC_SCHED80_INNER_DIAMETER
+    friction = PVC_SCHED80_FRICTION_FACTOR
+    velocity = SUPPLY_VELOCITY
+    reynolds = reynolds_number(diameter, velocity)
+    loss = pressure_loss_from_pipe(diameter, length1, friction, velocity)
+    pressure += loss
+    loss = pressure_loss_from_fittings(velocity, quantity_angles)
+    pressure += loss
+    loss = pressure_loss_from_pipe_reduction(diameter,
+            velocity, reynolds, HDPE_SDR11_INNER_DIAMETER)
+    pressure += loss
+    diameter = HDPE_SDR11_INNER_DIAMETER
+    friction = HDPE_SDR11_FRICTION_FACTOR
+    velocity = HOUSEHOLD_VELOCITY
+    loss = pressure_loss_from_pipe(diameter, length2, friction, velocity)
+    pressure += loss
+    print(f"Pressure at house: {pressure:.1f} kilopascals")
 if __name__ == "__main__":
     main()
