@@ -5,8 +5,8 @@
 // Purpose: A simple console-based program that helps users
 //          memorize scriptures by progressively hiding words.
 // --------------------------------------------------------
-
 using System;
+using System.Collections.Generic;
 
 class Program
 {
@@ -42,5 +42,79 @@ class Program
         }
 
         Console.WriteLine("\nThank you for using the Scripture Memorizer Program!");
+    }
+}
+
+// Class to represent a scripture reference
+class Reference
+{
+    public string Book { get; }
+    public int Chapter { get; }
+    public int Verse { get; }
+
+    public Reference(string book, int chapter, int verse)
+    {
+        Book = book;
+        Chapter = chapter;
+        Verse = verse;
+    }
+
+    public string GetDisplayText()
+    {
+        return $"{Book} {Chapter}:{Verse}";
+    }
+}
+
+// Class to handle scripture text and word hiding logic
+class Scripture
+{
+    private Reference _reference;
+    private string _originalText;
+    private List<string> _words;
+    private HashSet<int> _hiddenIndices;
+
+    public Scripture(Reference reference, string text)
+    {
+        _reference = reference;
+        _originalText = text;
+        _words = new List<string>(text.Split(' '));
+        _hiddenIndices = new HashSet<int>();
+    }
+
+    public string GetDisplayText()
+    {
+        string displayText = "";
+        for (int i = 0; i < _words.Count; i++)
+        {
+            if (_hiddenIndices.Contains(i))
+            {
+                displayText += "_____ ";
+            }
+            else
+            {
+                displayText += _words[i] + " ";
+            }
+        }
+        return $"{_reference.GetDisplayText()}\n{displayText.Trim()}";
+    }
+
+    public void HideRandomWords(int count)
+    {
+        Random rand = new Random();
+        int hiddenWords = 0;
+        while (hiddenWords < count && _hiddenIndices.Count < _words.Count)
+        {
+            int index = rand.Next(_words.Count);
+            if (!_hiddenIndices.Contains(index))
+            {
+                _hiddenIndices.Add(index);
+                hiddenWords++;
+            }
+        }
+    }
+
+    public bool IsCompletelyHidden()
+    {
+        return _hiddenIndices.Count == _words.Count;
     }
 }
